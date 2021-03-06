@@ -15,8 +15,8 @@ fn main() -> Result<(), String> {
         }
     }
     entries.sort();
-    let pair_result = find_pair(&entries);
-    let triple_result = find_triple(&entries);
+    let _pair_result = find_pair(&entries);
+    let _triple_result = find_triple(&entries);
     
     Ok(())
 }
