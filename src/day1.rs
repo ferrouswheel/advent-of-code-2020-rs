@@ -1,7 +1,6 @@
-use std::{convert::TryInto, fs::File};
-use std::io::{self, BufRead};
-use std::path::Path;
-use std::process;
+mod utils;
+
+use utils::read_lines;
 
 fn main() -> Result<(), String> {
     let mut entries: Vec<u64> = Vec::new();
@@ -69,14 +68,4 @@ fn show_answer_2(a: u64, b: u64) {
 fn show_answer_3(a: u64, b: u64, c: u64) {
     println!("{:?} + {:?} + {:?} = 2020", a, b, c);
     println!("{:?} x {:?} x {:?} = {:?}", a, b, c, a * b * c);
-}
-
-// The output is wrapped in a Result to allow matching on errors
-// Returns an Iterator to the Reader of the lines of the file.
-fn read_lines<P>(filename: P) -> io::Result<io::Lines<io::BufReader<File>>>
-where
-    P: AsRef<Path>
-{
-    let file = File::open(filename)?;
-    Ok(io::BufReader::new(file).lines())
 }
