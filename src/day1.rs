@@ -5,7 +5,6 @@ use utils::read_lines;
 fn main() -> Result<(), String> {
     let mut entries: Vec<u64> = Vec::new();
 
-    // File hosts must exist in current path before this produces output
     if let Ok(lines) = read_lines("input/day1.txt") {
         // Consumes the iterator, returns an (Optional) String
         for line in lines {

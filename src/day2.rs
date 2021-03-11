@@ -9,7 +9,6 @@ fn main() -> Result<(), String> {
     let mut valid_passwords_part_2 = 0u64;
     let mut line_no = 0u64;
 
-    // File hosts must exist in current path before this produces output
     if let Ok(lines) = read_lines("input/day2.txt") {
         // Consumes the iterator, returns an (Optional) String
         for line in lines {
