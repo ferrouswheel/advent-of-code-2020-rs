@@ -13,10 +13,22 @@ const INPUT_FN : &str = "input/day4.txt";
 
 
 struct Passport {
-    is_valid: bool
+    has_required_fields: bool,
+    fields_are_valid: bool,
 }
 
 fn field_validations(field_name: &str, val: &str) -> bool {
+    // part 2 validate fields
+    // byr (Birth Year) - four digits; at least 1920 and at most 2002.
+    // iyr (Issue Year) - four digits; at least 2010 and at most 2020.
+    // eyr (Expiration Year) - four digits; at least 2020 and at most 2030.
+    // hgt (Height) - a number followed by either cm or in:
+    // If cm, the number must be at least 150 and at most 193.
+    // If in, the number must be at least 59 and at most 76.
+    // hcl (Hair Color) - a # followed by exactly six characters 0-9 or a-f.
+    // ecl (Eye Color) - exactly one of: amb blu brn gry grn hzl oth.
+    // pid (Passport ID) - a nine-digit number, including leading zeroes.
+    // cid (Country ID) - ignored, missing or not.
     match field_name {
         "byr" => {
             let v : u64 = val.parse().unwrap();
@@ -122,41 +134,35 @@ fn read_passport(lines: &mut io::Lines<io::BufReader<File>>) -> Option<Passport>
 
     }
     let mut is_valid = true;
+    let mut has_fields = true;
     for label in expected_labels {
-        is_valid = match passport_fields.get(label) {
+        let result = match passport_fields.get(label) {
             Some(val) => {
                 println!("{:?}:{:?}", label, val);
-                field_validations(label, val)
+                (true, field_validations(label, val))
             },
             None => {
                 println!("{:?}:missing!", label);
-                false
+                (false, false)
             }
         };
-        if !is_valid { break; }
+        has_fields = result.0;
+        is_valid = result.1;
+        if !has_fields || !is_valid { break; }
     }
 
-    // part 2 validate fields
-    // byr (Birth Year) - four digits; at least 1920 and at most 2002.
-    // iyr (Issue Year) - four digits; at least 2010 and at most 2020.
-    // eyr (Expiration Year) - four digits; at least 2020 and at most 2030.
-    // hgt (Height) - a number followed by either cm or in:
-    // If cm, the number must be at least 150 and at most 193.
-    // If in, the number must be at least 59 and at most 76.
-    // hcl (Hair Color) - a # followed by exactly six characters 0-9 or a-f.
-    // ecl (Eye Color) - exactly one of: amb blu brn gry grn hzl oth.
-    // pid (Passport ID) - a nine-digit number, including leading zeroes.
-    // cid (Country ID) - ignored, missing or not.
-
-
     println!("");
-    Some(Passport {is_valid})
+    Some(Passport {
+        has_required_fields: has_fields,
+        fields_are_valid: is_valid,
+    })
 }
 
 
 fn main() -> Result<(), String> {
     let mut line_no = 0u64;
-    let mut valid_count = 0u64;
+    let mut part1_valid_count = 0u64;
+    let mut part2_valid_count = 0u64;
     let mut total_count = 0u64;
 
     if let Ok(mut lines) = read_lines(INPUT_FN) {
@@ -165,8 +171,11 @@ fn main() -> Result<(), String> {
         while !finished {
             match read_passport(&mut lines) {
                 Some(p) => {
-                    if p.is_valid {
-                        valid_count += 1;
+                    if p.has_required_fields {
+                        part1_valid_count += 1;
+                        if p.fields_are_valid {
+                            part2_valid_count += 1;
+                        }
                     }
                     total_count += 1;
                 },
@@ -177,7 +186,8 @@ fn main() -> Result<(), String> {
         }
     }
     
-    println!("part 1 answer, valid passports = {:?} / {:?}", valid_count, total_count);
+    println!("part 1 answer, valid passports = {:?} / {:?}", part1_valid_count, total_count);
+    println!("part 2 answer, valid passports = {:?} / {:?}", part2_valid_count, total_count);
     
     Ok(())
 }
